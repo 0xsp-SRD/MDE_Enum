@@ -47,7 +47,7 @@ MDE_Enum /local /asr /alt
 ```
 2. Enumerate the rules on remote computers. 
 ```
-MDE_Enum <remoteComputer> <username> <domain> <password> /asr /alt 
+MDE_Enum <remoteComputer> <domain> <username> <password> /asr /alt 
 ```
 ## Acknowledgements 
 
