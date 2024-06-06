@@ -14,6 +14,7 @@ MDE_Enum is a comprehensive .NET tool designed to extract and display detailed i
 ## Usage 
 
 ### Windows Defender exclusion paths
+This feature extracts the values from Windows Event ID 5007 logs. The tool uses regex pattern matching to accurately extract these values from the event description text.
 
 1. Enumerate exclusion paths locally 
 ```
@@ -26,6 +27,7 @@ MDE_Enum <remoteComputer> <username> <password> <domain> /paths
 ```
 
 ### Triggered ASR Rules 
+This feature extracts the values from Windows Event ID 1121 logs. The tool uses regex pattern matching to accurately extract these values from the event description text.
 
 1. Enumerate logged ASR rules locally 
 ```
@@ -37,6 +39,7 @@ MDE_Enum /local /asr
 MDE_Enum <remoteComputer> <username> <password> <domain> /asr 
 ```
 ### Enumerate ASR Rules 
+This feature extracts the Attack Surface Reduction (ASR) rules from the MSFT_MpPreference WMI class and provides a comprehensive status of the rules along with their corresponding names.
 
 1. Enumerate the rules locally 
 ```
@@ -46,6 +49,6 @@ MDE_Enum /local /asr /alt
 ```
 MDE_Enum <remoteComputer> <username> <domain> <password> /asr /alt 
 ```
+## Acknowledgements 
 
-
-
+* Thanks to VakninHai (https://x.com/VakninHai/status/1796628601535652289)
