@@ -1,10 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Security.AccessControl;
+using System.IO;
+using System.Security.Principal;
 
 namespace MDE_Enum
 {
@@ -53,8 +56,9 @@ namespace MDE_Enum
 
             Console.WriteLine("By : @zux0x3a \n");
         
-           Console.WriteLine("------------------Retrieve Defender Exclusion Paths Using Event Logs -------------\n");
+            Console.WriteLine("------------------Retrieve Defender Exclusion Paths Using Event Logs -------------\n");
             Console.WriteLine("Local System  : MDE_Enum /local /paths ");
+            Console.WriteLine("Local System / Check Access: MDE_Enum /local /paths /access")
             Console.WriteLine("Remote System :  MDE_Enum <remoteComputer> <username> <password> <domain> /paths\n");
 
 
@@ -63,7 +67,7 @@ namespace MDE_Enum
             Console.WriteLine("Local System - MDE_Enum /local /asr ");
             Console.WriteLine("Remote System - MDE_Enum <remoteComputer> <username> <password> <domain> /asr\n");
 
-            Console.WriteLine("------------------Retrieve ASR rules From MSP_Preference ----------------\n");
+            Console.WriteLine("------------------Retrieve ASR rules From MSFT Mp_Preference ----------------\n");
 
             Console.WriteLine("Local System - MDE Enum /local /asr /alt");
             Console.WriteLine("Remote System - MDE_Enum <remoteComputer> <domain> <username> <password> /asr /alt\n");
@@ -88,6 +92,41 @@ namespace MDE_Enum
             string pattern = @"ID:\s*([0-9A-FA-f\-]+)"; // regex to extract ASR formatted rules. 
             Match match = Regex.Match(message, pattern);
             return match.Success ? match.Groups[1].Value : null;
+        }
+
+
+        public static bool CheckWriteAccess(string path) // the following function would check if the excluded path can have write access to it 
+        {
+            try
+            {
+                if (Directory.Exists(path))
+                {
+                    // Get the current user's identity
+                    WindowsIdentity currentUser = WindowsIdentity.GetCurrent();
+                    WindowsPrincipal principal = new WindowsPrincipal(currentUser);
+
+                    // Get the access control list (ACL) for the directory
+                    DirectorySecurity security = Directory.GetAccessControl(path);
+                    AuthorizationRuleCollection rules = security.GetAccessRules(true, true, typeof(SecurityIdentifier));
+
+                    foreach (FileSystemAccessRule rule in rules)
+                    {
+                        if (currentUser.User.Equals(rule.IdentityReference) || principal.IsInRole((SecurityIdentifier)rule.IdentityReference))
+                        {
+                            if ((rule.FileSystemRights & FileSystemRights.WriteData) == FileSystemRights.WriteData &&
+                                rule.AccessControlType == AccessControlType.Allow)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore any exceptions and return false
+            }
+            return false;
         }
 
 
