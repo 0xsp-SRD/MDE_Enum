@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.Eventing.Reader;
@@ -84,13 +84,17 @@ namespace WindowsDefenderEventLog_Enum
             }
         }
 
-      
 
         static void Main(string[] args) 
         {
             if (args.Length == 2 && args[0].ToLower() == "/local" && args[1].ToLower() == "/paths")
             {
                 QueryLocal("/paths");
+            }
+
+            else if (args.Length == 3 && args[0].ToLower() == "/local" && args[1].ToLower() == "/paths" && args[2].ToLower() == "/access")
+            {
+                QueryLocal("/paths AND Check");
             }
 
             else if (args.Length == 3 && args[0].ToLower() == "/local" && args[1].ToLower() == "/asr" && args[2].ToLower() == "/alt")
@@ -136,18 +140,26 @@ namespace WindowsDefenderEventLog_Enum
       ----------------------------------------
 
 ");
-            int eventId = 0; 
+            int eventId = 0;
+            bool CheckAccessMode = false; 
 
             if (mode == "/paths") {
                  eventId = 5007;
             } else if (mode == "/asr")
             {
                 eventId = 1121; 
-            }             
-      
+            }   
+            else if ( mode == "/paths AND Check")
+            {
+                eventId = 5007; 
+                CheckAccessMode = true; 
+
+            }
 
 
-  
+
+
+
             string pattern = @"HKLM\\SOFTWARE\\Microsoft\\Windows Defender\\Exclusions\\Paths\\(.*)";
 
             string logName = "Microsoft-Windows-Windows Defender/Operational";
@@ -195,9 +207,30 @@ namespace WindowsDefenderEventLog_Enum
                         if (match.Success)
                         {
                             string found = match.Groups[1].Value;
+
+                            found = found.Split(' ')[0]; // this will remove 0x0  
+
+
                             Console.WriteLine("[+] Exclusion Path: " + found);
                             Console.WriteLine("[!] Time Created: " + eventInstance.TimeCreated);
-                            Console.WriteLine();
+
+                     
+                            // check if discovered paths are writable 
+                            if (CheckAccessMode == true)
+                            {
+                                bool Access = funcs.CheckWriteAccess(found);
+
+                                if (Access == true)
+                                {
+                                    Console.WriteLine("[+] Write Access: True ");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("[+] Write Access: False ");
+                                }
+                                Console.WriteLine();
+
+                            }
                         }
 
                     }
