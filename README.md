@@ -18,7 +18,9 @@ This feature extracts the values from Windows Event ID 5007 logs. The tool uses 
 
 1. Enumerate exclusion paths locally 
 ```
-MDE_Enum /local /paths 
+MDE_Enum /local /paths
+
+MDE_Enum /local /paths /access (check if current user has write access) 
 ```
 
 2. Enumerate exclusion paths on remote computers
