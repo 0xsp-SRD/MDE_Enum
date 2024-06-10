@@ -58,7 +58,7 @@ namespace MDE_Enum
         
             Console.WriteLine("------------------Retrieve Defender Exclusion Paths Using Event Logs -------------\n");
             Console.WriteLine("Local System  : MDE_Enum /local /paths ");
-            Console.WriteLine("Local System / Check Access: MDE_Enum /local /paths /access")
+            Console.WriteLine("Local System / Check Access: MDE_Enum /local /paths /access");
             Console.WriteLine("Remote System :  MDE_Enum <remoteComputer> <username> <password> <domain> /paths\n");
 
 
